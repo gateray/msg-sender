@@ -2,14 +2,41 @@
 # coding: utf-8
 
 import tornado.ioloop
-import settings
 from tornado.web import Application
-from settings import routers, appSettings
+from settings import *
 
 def make_app(routers, **kwargs):
-    return Application(routers, **kwargs)
+    class ExtApplication(Application):
+        def __init__(self, routers, **kwargs):
+            super(ExtApplication, self).__init__(routers, **kwargs)
+            self.redisConn = None
+            for urlSpec in routers:
+                if urlSpec.name not in enableList:
+                    routers.remove(urlSpec)
+        def getRedisConn(self):
+            try:
+                import tornadoredis
+                if self.redisConn is None:
+                    redisConn = tornadoredis.Client(host=redis["host"], port=redis["port"], selected_db=redis["db"])
+                    redisConn.connect()
+                    self.redisConn = redisConn
+                return self.redisConn
+            except Exception:
+                raise
+        def getSMTPConn(self):
+            try:
+                import smtplib
+                smtp = smtplib.SMTP()
+                smtp.connect(mail["smtpServer"], mail["smtpPort"])
+                # smtp.starttls()
+                smtp.login(mail["username"], mail["password"])
+                return smtp
+            except Exception:
+                raise
+
+    return ExtApplication(routers, **kwargs)
 
 if __name__ == "__main__":
     app = make_app(routers, **appSettings)
-    app.listen(settings.port, address=settings.address)
+    app.listen(port, address=address)
     tornado.ioloop.IOLoop.current().start()

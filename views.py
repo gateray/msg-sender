@@ -4,8 +4,7 @@
 import tornado.gen
 from tornado.web import RequestHandler
 from settings import *
-from models import WeiXinQYMessage
-
+from models import WeiXinQYMessage, SMSMessage, EmailMessage
 
 class BaseHandler(RequestHandler):
     def prepare(self):
@@ -19,6 +18,7 @@ class BaseHandler(RequestHandler):
             byteText = text.encode() if isinstance(text, str) else text
             m.update(byteText)
             return m.hexdigest()
+
         if self.request.method == "POST":
             if enableSignature:
                 #获取所有请求参数
@@ -36,8 +36,8 @@ class BaseHandler(RequestHandler):
                 if (time.time() - signatureTimeOutSecs) > int(argsDict['timestamp'][0]):
                     raise Exception("signature has expired.")
 
-
-
+    def get(self, *args, **kwargs):
+        self.write("it works!")
 
 class IndexHandler(RequestHandler):
     def get(self):
@@ -46,8 +46,35 @@ class IndexHandler(RequestHandler):
 class WeiXinQYHandler(BaseHandler):
     @tornado.gen.coroutine
     def post(self, *args, **kwargs):
-        weiXinQYMessage = WeiXinQYMessage(**qywx)
-        weiXinQYMessage.title = self.get_argument('title', "")
-        weiXinQYMessage.content = self.get_argument('content', "")
+        title = self.get_argument("title", "")
+        content = self.get_argument("content", "")
+        weiXinQYMessage = WeiXinQYMessage(self.application.getRedisConn(),
+                                          title=title, content=content, **qywx)
         yield weiXinQYMessage.send()
+        self.write("ok")
+
+class SMSHandler(BaseHandler):
+    @tornado.gen.coroutine
+    def post(self, *args, **kwargs):
+        smsBody = sms.get("body")
+        smsBody["text"] = self.get_argument("content", "")
+        smsMessage = SMSMessage(sms["baseUrl"], smsBody, timeout=sms["timeout"])
+        yield smsMessage.send()
+        self.write("ok")
+
+class EmailHandler(BaseHandler):
+    @tornado.gen.coroutine
+    def post(self, *args, **kwargs):
+        content = self.get_argument("content", "")
+        title = self.get_argument("title", "")
+        emailMessage = EmailMessage(
+            self.application.getSMTPConn(),
+            subject=title,
+            fromAddress=mail["fromAddress"],
+            toAddressList=mail["toAddressList"],
+            ccAddressList=mail["ccAddressList"],
+            defaultSign=mail["defaultSign"]
+        )
+        emailMessage.addMessage(content, type="html")
+        yield emailMessage.send()
         self.write("ok")
