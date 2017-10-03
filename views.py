@@ -5,6 +5,8 @@ import tornado.gen
 from tornado.web import RequestHandler
 from settings import *
 from models import WeiXinQYMessage, SMSMessage, EmailMessage
+from tornado.websocket import WebSocketHandler
+from datetime import datetime
 
 class BaseHandler(RequestHandler):
     def prepare(self):
@@ -23,6 +25,10 @@ class BaseHandler(RequestHandler):
             if enableSignature:
                 #获取所有请求参数
                 argsDict = self.request.arguments #{'timestamp': [b'12341234182'], 'test': [b'abc']}
+                # 验证时间戳
+                import time
+                if (time.time() - signatureTimeOutSecs) > int(argsDict.get('timestamp', [0])[0]):
+                    raise Exception("signature has expired.")
                 #获取签名
                 signature = argsDict.pop('signature', None)
                 assert signature, "missing signature."
@@ -31,10 +37,6 @@ class BaseHandler(RequestHandler):
                 combineStr = "".join([ "%s%s"%(k,argsDict[k][0].decode()) for k in sorted(argsDict)]) + apiKey
                 #验证签名
                 assert (hashdigest(combineStr) == signature), "signature not match."
-                #验证时间戳
-                import time
-                if (time.time() - signatureTimeOutSecs) > int(argsDict['timestamp'][0]):
-                    raise Exception("signature has expired.")
 
     def get(self, *args, **kwargs):
         self.write("it works!")
@@ -78,3 +80,26 @@ class EmailHandler(BaseHandler):
         emailMessage.addMessage(content, type="html")
         yield emailMessage.send()
         self.write("ok")
+
+class WebSocketHandler(WebSocketHandler):
+    users = set()
+
+    def open(self):
+        self.users.add(self)
+        for u in self.users:
+            u.write_message("[%s]-[%s]-login."%(self.request.remote_ip,
+                                          datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+
+    def on_message(self, message):
+        for u in self.users:
+            u.write_message("[%s]-[%s]-send: %s"%(self.request.remote_ip,
+                                    datetime.now().strftime('%Y-%m-%d %H:%M:%S'), message))
+
+    def on_close(self):
+        self.users.remove(self)
+        for u in self.users:
+            u.write_message("[%s]-[%s]-logout."%(self.request.remote_ip,
+                                          datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+
+    def check_origin(self, origin):
+        return True

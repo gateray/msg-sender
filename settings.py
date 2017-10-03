@@ -7,6 +7,7 @@ routers = [
     url(r"^/qywx/?", WeiXinQYHandler, name="qywx"),
     url(r"^/sms/?", SMSHandler, name="sms"),
     url(r"^/mail/?", EmailHandler, name="mail"),
+    url(r"^/ws/?", WebSocketHandler, name="websocket"),
 ]
 
 appSettings = {

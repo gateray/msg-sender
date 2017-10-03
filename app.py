@@ -8,11 +8,11 @@ from settings import *
 def make_app(routers, **kwargs):
     class ExtApplication(Application):
         def __init__(self, routers, **kwargs):
-            super(ExtApplication, self).__init__(routers, **kwargs)
             self.redisConn = None
             for urlSpec in routers:
                 if urlSpec.name not in enableList:
                     routers.remove(urlSpec)
+            super(ExtApplication, self).__init__(routers, **kwargs)
         def getRedisConn(self):
             try:
                 import tornadoredis
@@ -22,6 +22,7 @@ def make_app(routers, **kwargs):
                     self.redisConn = redisConn
                 return self.redisConn
             except Exception:
+                self.redisConn = None
                 raise
         def getSMTPConn(self):
             try:
@@ -32,6 +33,8 @@ def make_app(routers, **kwargs):
                 smtp.login(mail["username"], mail["password"])
                 return smtp
             except Exception:
+                if smtp:
+                    smtp.close()
                 raise
 
     return ExtApplication(routers, **kwargs)
