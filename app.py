@@ -41,7 +41,8 @@ def make_app(routers, **kwargs):
     return ExtApplication(routers, **kwargs)
 
 if __name__ == "__main__":
-    tornado.options.define(name='port', default=port, type=int, help='given a port')
+    tornado.options.define(name='port', default=port, type=int, help='given a http listen port')
+    tornado.options.parse_command_line()
     app = make_app(routers, **appSettings)
     app.listen(tornado.options.options.port, address=address)
     tornado.ioloop.IOLoop.current().start()
