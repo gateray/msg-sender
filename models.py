@@ -83,8 +83,6 @@ class WeiXinQYMessage(Message):
     @tornado.gen.coroutine
     def send(self):
         accessToken = yield self.getAccessToken()
-        print(accessToken)
-        return
         if len(accessToken) == 0: return None
         body = {
             "touser": "gateray",
