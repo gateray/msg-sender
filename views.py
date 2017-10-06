@@ -38,12 +38,14 @@ class BaseHandler(RequestHandler):
                 #验证签名
                 assert (hashdigest(combineStr) == signature), "signature not match."
 
+    @tornado.gen.coroutine
     def get(self, *args, **kwargs):
-        self.write("it works!")
+        yield self.write("it works!")
 
 class IndexHandler(RequestHandler):
+    @tornado.gen.coroutine
     def get(self):
-        self.write("it works!")
+        yield self.write("it works!")
 
 class WeiXinQYHandler(BaseHandler):
     @tornado.gen.coroutine

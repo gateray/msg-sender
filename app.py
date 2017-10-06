@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import tornado.ioloop
+import tornado.options
 from tornado.web import Application
 from settings import *
 
@@ -40,6 +41,7 @@ def make_app(routers, **kwargs):
     return ExtApplication(routers, **kwargs)
 
 if __name__ == "__main__":
+    tornado.options.define(name='port', default=port, type=int, help='given a port')
     app = make_app(routers, **appSettings)
-    app.listen(port, address=address)
+    app.listen(tornado.options.options.port, address=address)
     tornado.ioloop.IOLoop.current().start()
