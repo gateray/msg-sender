@@ -1,0 +1,70 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+address = "0.0.0.0"     #服务器的监听地址
+port = 8000             #服务器的监听端口
+apiKey = "replace_your_key"     #apikey，开启签名时使用，保存在服务器本地，不对外公开
+enableSignature = False         #是否开启签名
+signatureTimeOutSecs = 60       #设置签名有效期
+signatureMethod = "sha256"      #设置签名的方法
+signatureSupportList = ("md5", "sha1", "sha128", "sha224", "sha256", "sha384", "sha512") #设置签名支持列表
+
+#redis连接配置，使用微信企业号发送消息时启用，用于保存调用微信接口时使用的access_token
+redis = {
+    "host": "127.0.0.1",
+    "port": 6379,
+    "db": 0,
+}
+#指定保存access_token的key
+redisKeys = {
+    "WXQY_ACCESS_TOKEN": "msgsender:wxqy:actoken",
+}
+#注册微信企业号后得到的字段
+qywx = {
+    "baseUrl": "https://qyapi.weixin.qq.com/cgi-bin", 
+    "corpid": "wx17000000000000",        #根据自己的企业号修改
+    "corpsecret": "xxxxxxxxxxxxxxxxxxxx", #根据自己的企业号修改
+    "agentid": "00000000", #根据自己的企业号修改
+    "timeout": 5,  #设置调用超时时间
+}
+#使用邮件发送消息时启用
+mail = {
+    "defaultSign": '''
+    <br/><br/>
+    <div style="color: rgb(0, 0, 0); font-family: helvetica; font-size: 12px; font-style: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+        研发中心&nbsp;<br class="">
+        Gateray<br class="">
+        ------------------------<br class=""><font color="#919191" class="">
+        Mobile:10086&nbsp; &nbsp;<br class="">
+        QQ:437925289<br class="">
+        E-MAIL:<span>
+            <a href="mailto:437925289@qq.com" class="" target="_blank">437925289@qq.com</a>
+        </span></font><br class="">------------------------<br class="">
+        xxxxxxxxx有限公司<br class=""><span">
+        <a href="http://www.xxx.com" class="" target="_blank">www.xxx.com</a></span>&nbsp;
+    </div>''', #设置邮件签名
+    "fromAddress": "me@example.com", #发送人邮箱
+    "username": "myname",  #邮箱登录名
+    "password": "mypass",   #邮箱密码
+    "toAddressList": ["437925289@qq.com", "someone@qq.com"], #收件人邮箱列表
+    "ccAddressList": [],   #抄送人列表
+    "smtpServer": "smtp.example.com",   #邮件发送服务器地址
+    "smtpPort": 25,  #邮件发送服务器端口
+}
+#使用玄武短信接口发送消息时启用
+sms = {
+    "baseUrl": "http://211.147.239.62:9050/cgi-bin",
+    "body": {
+        "username": "xxx",     #短信平台接口用户名
+        "password": "xxx",     #短信平台接口用户密码
+        "to": "13800138000",   #发送的目标手机号，如果有多个手机号可以用空格格开，一次最多100个号码
+        "text": "",
+        "subID": "",
+        "msgType": 1,
+        "encode": 1,
+        "version": "1.0"
+    },
+    "timeout": 5,
+}
+
+enableList = [ "index", "qywx", "mail", "sms" ] #启用的功能列表
