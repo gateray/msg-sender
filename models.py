@@ -41,6 +41,8 @@ class WeiXinQYMessage(Message):
         self.corpid = qywxSettings.get("corpid")
         self.corpsecret = qywxSettings.get("corpsecret")
         self.agentid = qywxSettings.get("agentid")
+		self.toUser = qywxSettings.get("toUser")
+		self.toParty = qywxSettings.get("toParty")
         self.timeout = qywxSettings.get("timeout")
         self.__redis = redisConn
 
@@ -85,8 +87,8 @@ class WeiXinQYMessage(Message):
         accessToken = yield self.getAccessToken()
         if len(accessToken) == 0: return None
         body = {
-            "touser": "gateray",
-            "toparty": "",
+            "touser": self.toUser,
+            "toparty": self.toParty,
             "totag": "",
             "msgtype": "text",
             "agentid": self.agentid,
