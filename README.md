@@ -1,10 +1,10 @@
-#概述
+# 概述
 
->msg-sender是一个基于tornado框架的异步消息发送接口，当前支持消息发送微信企业号、玄武短信接口和Email; 接口调用支持http和websocket。遵循MIT开源许可。
+> msg-sender是一个基于tornado框架的异步消息发送接口，当前支持消息发送微信企业号、玄武短信接口和Email; 接口调用支持http和websocket。遵循MIT开源许可。
 
-#接口调用方式
+# 接口调用方式
 
-##微信企业号消息发送接口
+## 微信企业号消息发送接口
 
 关闭签名：
 
@@ -24,17 +24,17 @@ POST http://host:8000/qywx?content=abc&title=接口测试
 
 开启签名：
 
-字段名|字段类型|是否必须|描述
+字段名 | 字段类型 | 是否必须 | 描述
 
----------|------------|------------|------
+--------- | ------------ | ------------ | ------
 
-title|String|是|消息的标题
+title | String | 是 | 消息的标题
 
-content|String|是|消息的内容
+content | String | 是 | 消息的内容
 
-timestamp|Integer|是|unix时间戳（当前时间，10位数字）
+timestamp | Integer | 是 | unix时间戳（当前时间，10位数字）
 
-signature|String|是|16进制格式的签名值,支持md5、sha1、sha128、sha224、 sha256、 sha384、 sha512签名方法，默认为sha256。
+signature | String | 是 | 16进制格式的签名值,支持md5、sha1、sha128、sha224、 sha256、 sha384、 sha512签名方法，默认为sha256。
 
 签名说明：
 
@@ -66,17 +66,17 @@ POST http://host:8000/qywx?title=test&content=test消息内容&timestamp=1507545
 
 
 
-##玄武短信消息发送接口
+## 玄武短信消息发送接口
 
 关闭签名：
 
-字段名|字段类型|是否必须|描述
+字段名 | 字段类型 | 是否必须 | 描述
 
----------|------------|------------|------
+--------- | ------------ | ------------ | ------
 
-title|String|是|消息的标题
+title | String | 是 | 消息的标题
 
-content|String|是|消息的内容
+content | String | 是 | 消息的内容
 
 ```
 
@@ -90,17 +90,17 @@ POST http://host:8000/sms?content=这是一条测试短信&title=标题会忽略
 
 
 
-##Email消息发送接口
+## Email消息发送接口
 
 关闭签名：
 
-字段名|字段类型|是否必须|描述
+字段名 | 字段类型 | 是否必须 | 描述
 
----------|------------|------------|------
+--------- | ----------- | ------------ | ------
 
-title|String|是|消息的标题
+title | String | 是 | 消息的标题
 
-content|String|是|消息的内容
+content | String | 是 | 消息的内容
 
 ```
 
@@ -114,9 +114,9 @@ POST http://host:8000/mail?content=这是一封测试邮件，请勿回复！&ti
 
 
 
-#部署
+# 部署
 
-##环境要求
+## 环境要求
 
 1. python 3.5以上
 
@@ -126,11 +126,11 @@ POST http://host:8000/mail?content=这是一封测试邮件，请勿回复！&ti
 
 
 
-##依赖安装
+## 依赖安装
 
 ```
 
-git clone https://gitee.com/gateray/msg-sender.git
+git clone https://gitee.com/gateray/msg-sender.git 
 
 cd msg-sender
 
@@ -140,9 +140,9 @@ pip install -r requirements.txt
 
 
 
-##运行
+## 运行
 
-###测试环境
+### 测试环境
 
 ```
 
@@ -156,11 +156,11 @@ python app.py --port=8000
 
 
 
-###生产环境部署建议
+### 生产环境部署建议
 
 建议使用nginx作为反向代理，后端开启多个python进程(建议与cpu核数相等)做负载均衡。
 
-####打开最多文件数限制：
+#### 打开最多文件数限制：
 
 方式一：
 
@@ -176,7 +176,7 @@ ulimit -n 1048576
 
 vim /etc/security/limits.conf
 
-#加上下面配置：
+# 加上下面配置：
 
 * - nofile 1048576
 
@@ -199,13 +199,13 @@ Group=gateray
 
 LimitNOFILE= 1048576
 
-#实际上对于nginx，可以通过配置文件中 worker_connections  1048576;指定
+# 实际上对于nginx，可以通过配置文件中 worker_connections  1048576;指定
 
 ```
 
 
 
-####开启多个python进程：
+#### 开启多个python进程：
 
 ```
 
@@ -287,7 +287,7 @@ stdout_logfile=/tmp/%(program_name)s.log       ; stdout log path, NONE for none;
 
 ```
 
-####nginx配置：
+#### nginx配置：
 
 ```
 
@@ -365,7 +365,7 @@ http {
 
 ```
 
-#本地压测结果：
+# 本地压测结果：
 
 ```
 
@@ -487,7 +487,7 @@ Percentage of the requests served within a certain time (ms)
 
 
 
-#联系方式
+# 联系方式
 
 QQ：437925289
 
