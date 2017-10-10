@@ -14,7 +14,6 @@ def make_app(routers, **kwargs):
             for urlSpec in routers:
                 if urlSpec.name in enableList:
                     postRouters.append(urlSpec)
-            print(postRouters)
             super(ExtApplication, self).__init__(postRouters, **kwargs)
         def getRedisConn(self):
             try:
