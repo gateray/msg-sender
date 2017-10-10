@@ -41,8 +41,8 @@ class WeiXinQYMessage(Message):
         self.corpid = qywxSettings.get("corpid")
         self.corpsecret = qywxSettings.get("corpsecret")
         self.agentid = qywxSettings.get("agentid")
-		self.toUser = qywxSettings.get("toUser")
-		self.toParty = qywxSettings.get("toParty")
+        self.toUser = qywxSettings.get("toUser")
+        self.toParty = qywxSettings.get("toParty")
         self.timeout = qywxSettings.get("timeout")
         self.__redis = redisConn
 
