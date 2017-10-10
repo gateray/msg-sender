@@ -10,10 +10,12 @@ def make_app(routers, **kwargs):
     class ExtApplication(Application):
         def __init__(self, routers, **kwargs):
             self.redisConn = None
+            postRouters = []
             for urlSpec in routers:
-                if urlSpec.name not in enableList:
-                    routers.remove(urlSpec)
-            super(ExtApplication, self).__init__(routers, **kwargs)
+                if urlSpec.name in enableList:
+                    postRouters.append(urlSpec)
+            print(postRouters)
+            super(ExtApplication, self).__init__(postRouters, **kwargs)
         def getRedisConn(self):
             try:
                 import tornadoredis
