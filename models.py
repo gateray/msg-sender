@@ -36,7 +36,7 @@ class Message(object):
 
 class WeiXinQYMessage(Message):
     def __init__(self, redisConn, title="", content="", **qywxSettings):
-        super(WeiXinQYMessage, self).__init__(title, content)
+        super(WeiXinQYMessage, self).__init__(title=title, content=content)
         self.baseUrl = qywxSettings.get("baseUrl")
         self.corpid = qywxSettings.get("corpid")
         self.corpsecret = qywxSettings.get("corpsecret")
@@ -62,7 +62,10 @@ class WeiXinQYMessage(Message):
             return ""
         try:
             accessToken = json.loads(response.body).get("access_token")
-            yield tornado.gen.Task(self.__redis.setex, redisKeys["WXQY_ACCESS_TOKEN"], 7200, accessToken)
+            try:
+                yield tornado.gen.Task(self.__redis.setex, redisKeys["WXQY_ACCESS_TOKEN"], 7200, accessToken)
+            except:
+                pass
             return accessToken
         except json.JSONDecodeError:
             print("JSON decode error, fail to get access_token.")

@@ -23,9 +23,8 @@ def make_app(routers, **kwargs):
                     redisConn.connect()
                     self.redisConn = redisConn
                 return self.redisConn
-            except Exception:
+            except:
                 self.redisConn = None
-                raise
         def getSMTPConn(self):
             try:
                 import smtplib
