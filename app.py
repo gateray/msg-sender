@@ -24,6 +24,7 @@ def make_app(routers, **kwargs):
                     self.redisConn = redisConn
                 return self.redisConn
             except:
+                print("can not connect to redis.")
                 self.redisConn = None
         def getSMTPConn(self):
             try:

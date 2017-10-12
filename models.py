@@ -79,7 +79,6 @@ class WeiXinQYMessage(Message):
         try:
             accessToken = yield tornado.gen.Task(self.__redis.get, redisKeys["WXQY_ACCESS_TOKEN"])
         except Exception as e:
-            print(str(e))
             accessToken = ""
         if not accessToken:
             accessToken = yield self.refreshToken()
